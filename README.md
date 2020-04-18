@@ -2,11 +2,13 @@
 Vuejs OpenID Connect demo application using library [oidc-client](https://github.com/IdentityModel/oidc-client-js). Authentication flow information is handled by Vuex.
 
 Support:
-* OIDC Authentication (Auth Code + PCKE)
+* OpenID Connect  Authentication (Auth Code + PCKE)
 * Token negotiation
-* OIDC Endsession
+* OpenID Connect  Endsession
 * OAuth API Call
-* App routes: public, requires autentication or role base control
+* App pages are: 
+** Public 
+** Private: Requires autentication and requires role based scopes token
 
 # Deployment
 
