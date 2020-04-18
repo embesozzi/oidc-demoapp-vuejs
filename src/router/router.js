@@ -14,23 +14,40 @@ const router = new VueRouter({
     {
       path: '/home',
       name: 'Home',
-      component:  () => import('@/components/Home'),
+      component:  () => import('@/views/Home'),
       meta: {
-        requiresAuth: false
+        requiresAuth: false,
+      }
+    },
+    {
+      path: '/accessDenied',
+      name: 'AccessDenied',
+      component:  () => import('@/views/AccessDenied'),
+      meta: {
+        requiresAuth: false,
       }
     },
     {
       path: '/user',
-      name: 'User',
-      component: () => import('@/components/User'),
+      name: 'UserView',
+      component: () => import('@/views/UserView'),
       meta: {
         requiresAuth: true
       }
     },
     {
+      path: '/user/edit',
+      name: 'UserEdit',
+      component: () => import('@/views/UserEdit'),
+      meta: {
+        requiresAuth: true,
+        requiresRole : ['users:write']
+      }
+    },
+    {
       path: '/callback',
       name: 'Callback',
-      component:  () => import('@/components/Callback'),
+      component:  () => import('@/views/Callback'),
     }  
     ]
   });
@@ -40,26 +57,16 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   if (requiresAuth) 
   { 
-      // const isAuthenticated = (store.state.auth.user.tokenResponse && store.state.auth.user.tokenResponse.id_token);
-      // const isAuthenticated = (store.state.auth.user.token);
-      store.dispatch("auth/checkAccess").then((hasAccess) => {
-         if(hasAccess) {
-            next();
-         }  
-        else 
-        {
-          next('/home');
+    let requiresRole = to.meta.requiresRole;
+    store.dispatch("auth/checkAccess", requiresRole).then((statusCode) => {
+        if(statusCode == "OK") {
+          next();
+        }  
+        else {
+          let nextPage = (statusCode == "UNAUTHORIZED") ? '/home' :'/accessDenied';
+          next(nextPage);
         }
-      })
-      
-      /** 
-      if(hasAccess) {
-        next();
-      }  
-      else {
-        next('/home');
-      }
-      **/
+    })
   } 
   else 
   {

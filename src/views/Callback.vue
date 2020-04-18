@@ -9,7 +9,6 @@ export default {
   name: 'Callback',
   mounted() {
     this.$store.dispatch("auth/signinRedirectCallback")
-    //.then(this.$router.push("/user"));
   },
     computed: {
     ...mapGetters({
