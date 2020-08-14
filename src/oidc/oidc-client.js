@@ -4,17 +4,16 @@ import Oidc from 'oidc-client';
 Oidc.Log.logger = console;
 Oidc.Log.level = Oidc.Log.DEBUG;
 
-let oidcProviderDomain = 'https://gluu.hlgv.net';
+let oidcProviderDomain = 'https://idp-domain';
 
 const oidcClient = new Oidc.UserManager({
   userStore: new Oidc.WebStorageStateStore(),  
   authority: oidcProviderDomain,
-  client_id: 'e6a0f5d1-8c4f-4f8f-8bca-71fd3bb49bff',
+  client_id: 'client-id',
   redirect_uri: window.location.origin + '/callback',
   response_type: 'code',
   scope: 'openid profile idm-crud-roles',
   post_logout_redirect_uri: window.location.origin + '/home',
-  silent_redirect_uri: window.location.origin + '/callback-silent',
   accessTokenExpiringNotificationTime: 10,
   automaticSilentRenew: false,
   filterProtocolClaims: false,
