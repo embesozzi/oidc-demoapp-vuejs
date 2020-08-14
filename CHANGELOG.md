@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/embesozzi/oidc-demoapp-vuejs/compare/v1.1.0...v1.2.0) (2020-08-14)
+
+
+### Features
+
+* **oidc:** clean scopes variables ([dafe0b9](https://github.com/embesozzi/oidc-demoapp-vuejs/commit/dafe0b905f41650d9823c4447942408caca81bc1))
+
 # [1.1.0](https://github.com/embesozzi/oidc-demoapp-vuejs/compare/v1.0.0...v1.1.0) (2020-08-14)
 
 
