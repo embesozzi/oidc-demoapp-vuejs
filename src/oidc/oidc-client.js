@@ -12,7 +12,7 @@ const oidcClient = new Oidc.UserManager({
   client_id: 'client-id',
   redirect_uri: window.location.origin + '/callback',
   response_type: 'code',
-  scope: 'openid profile idm-crud-roles',
+  scope: 'openid profile scopes',
   post_logout_redirect_uri: window.location.origin + '/home',
   accessTokenExpiringNotificationTime: 10,
   automaticSilentRenew: false,
