@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/embesozzi/oidc-demoapp-vuejs/compare/v1.0.0...v1.1.0) (2020-08-14)
+
+
+### Features
+
+* **oidc:** clean oidc variables ([1987540](https://github.com/embesozzi/oidc-demoapp-vuejs/commit/1987540c976d6bed3c7588e314472c3ea4616cbf))
+
 # 1.0.0 (2020-08-14)
 
 
