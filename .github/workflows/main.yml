@@ -11,11 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
     - name: Setup Node.js and semantic-release plugins
       uses: actions/setup-node@v1
       with:
         node-version: 12
-        persist-credentials: false
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     - run: npm i -S @vue/cli-service && npm run build && npm install -g semantic-release @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/exec semantic-release/git semantic-release/release-notes-generator @semantic-release/npm
