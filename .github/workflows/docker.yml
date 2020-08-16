@@ -1,0 +1,17 @@
+name: Docker build && push CI/CD
+
+on:
+  create:
+    tags:
+      - '*'
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Get the version number from git tag
+      id: get_version_number
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d / -f 3 | sed -e 's/^v//')     
+    - name: Build idm-crud-api image
+      run: echo 'Builing && pushing docker images....'

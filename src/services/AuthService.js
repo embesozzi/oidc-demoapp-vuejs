@@ -35,12 +35,6 @@ oidcClient.events.addAccessTokenExpired(function () {
   store.dispatch('auth/signOut');
 });
 
-/** 
-oidcClient.events.addSilentRenewError(function () {
-  console.error('Silent Renew Error：', arguments);
-});
-***/
-
 oidcClient.events.addUserSignedOut(function () {
   alert('Sign Out processing ...');
   console.log('UserSignedOut：', arguments);

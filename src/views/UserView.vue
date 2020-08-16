@@ -11,7 +11,6 @@
     </div>
     <button v-on:click="getUser">API Get User</button>
     <button v-on:click="logout">Logout</button>
-    <!-- <button v-on:click="signInSilent">Renew (Silent)</button> -->
   </div>
 </template>
 
