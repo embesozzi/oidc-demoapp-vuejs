@@ -1,110 +1,86 @@
-import { AuthService } from '@/services/AuthService'
+import { getOidcClient } from '@/oidc/oidc-client'
 import router from '@/router/router'
 
+/**
+ * OpenID Connect flow using oidc-client-js library(@see: https://github.com/IdentityModel/oidc-client-js)
+ * @author Martin Besozzi <mbesozzi@identicum.com>
+ */
+
 const defaultState = {
-    user: {} 
+    user: {},
+    isOidcEventsHandled : false 
 };
-  
+
+let oidcClient = getOidcClient();
+
 const actions = {
-    signin: (context) => {
-        context.commit('AUTH_REQUEST_PENDING');
-        AuthService.signin()
-            .catch(function(error){
-                context.commit('AUTH_REQUEST_FAILURE', error);
-                 //TODO: redirect to login page or page to handle error
-            })
+    signin: () => {
+        oidcClient.signinRedirect();
     },
     signinRedirectCallback: (context) => {
-    // return new Promise((resolve, reject) => {
         context.commit('TOKEN_REQUEST_PENDING');
-        AuthService.signinRedirectCallback()
+        oidcClient.signinRedirectCallback()
             .then((response) => {
-                console.log(response);
-                context.commit('TOKEN_REQUEST_SUCCESS', response);
-                router.push('/user');
-    //            resolve(true)
+                context.commit('TOKEN_REQUEST_SUCCESS');
+                context.dispatch("setAuthenticationSuccess", response);
+                router.push('/home');
             })
             .catch(function(error){
                 context.commit('TOKEN_REQUEST_FAILURE', error);
-                //TODO: redirect to login page or page to handle error
-    //            reject(false)
             })
-   // })
     },
-    signInSilent: (context) => {
-         return new Promise((resolve, reject) => {
-            context.commit('AUTH_REQUEST_PENDING');
-            AuthService.signinSilent()
-                .then((response) => {
-                    console.log(response);
-                    context.commit('AUTH_REQUEST_SUCCESS');
-                    //router.push('/user');
-                     resolve(true)
-                })
-                .catch(function(error){
-                    context.commit('AUTH_REQUEST_FAILURE', error);
-                    //TODO: redirect to login page or page to handle error
-                     reject(false)
-                })
-         })        
+    setAuthenticationSuccess: (context, user) => {
+        // Check if library is suscribed to OIDC library events
+        if(!context.state.isOidcEventsHandled) {
+            oidcClient.events.addAccessTokenExpired(() => {
+                // TODO: Handliing token expiration
+            });
+            context.commit('OIDC_LIBRARY_EVENTS_HANDLED');
+        }
+        context.commit("AUTHENTICATION_SUCCESS", user);
     },
     signOut: (context) => {
         context.commit('LOGOUT_REQUEST_PENDING')
-        AuthService.signOutRedirect()
-            .then((response) => {
-                console.log(response);
+        oidcClient.signoutRedirect()
+            .then(() => {
                 context.commit('LOGOUT_REQUEST_SUCCESS')
              })
              .catch(function(error){
                 context.commit('LOGOUT_REQUEST_FAILURE', error);
-                //TODO: redirect to login page or page to handle error
             })
-    },  
-    checkAccess: (context, requiredRole) => {
-        return new Promise(resolve => {
-            const getUserPromise = new Promise(resolve => {
-                AuthService.getUser().then(user => {
-                    resolve(user)
-                }).catch(() => {
-                    resolve(null)
+    },
+    checkAccess: (context,requiresAuth) => {
+        return new Promise(resolve => { 
+                oidcClient = getOidcClient();
+                if(!requiresAuth) return resolve("OK")
+                // Check if we have a token in Session Storage 
+                const getUserPromise = new Promise(resolve => {
+                    oidcClient.getUser().then(user => {
+                        resolve(user)
+                    }).catch(() => {
+                        resolve(null)
+                    })
                 })
-            })
-            let statusCode = "UNAUTHORIZED";
-            getUserPromise.then(user => {
-                if(user && !user.expired) {
-                    if(requiredRole) {
-                        //TODO: Handled multivalued role required
-                        statusCode = (user.profile 
-                            && user.profile.role 
-                            && user.profile.role.includes(requiredRole[0])) ? "OK" : "FORBIDDEN";
-                    }
-                    else {
+                let statusCode = "UNAUTHORIZED";
+                getUserPromise.then(user => {
+                    // Check if we have token information and if token is not expired
+                    if(user && !user.expired) {
                         statusCode = "OK";
-                    } 
-                    // Ver de manejar otro estado    
-                    context.commit('TOKEN_REQUEST_SUCCESS', user);
-                }
-                resolve(statusCode)
-            })
-        })
+                        context.dispatch("setAuthenticationSuccess", user);
+                    }
+                    resolve(statusCode)
+                })
+             })
+        //})
     }
 };
   
 const mutations = {
-    AUTH_REQUEST_PENDING : (state) => {
-        state.user = { loading : true };
-    },
-    AUTH_REQUEST_SUCCESS : (state, authRequest) => {
-        state.user = { auth : authRequest };
-    },
-    AUTH_REQUEST_FAILURE : (state, error) => {
-        state.user = { error };
-    },
     TOKEN_REQUEST_PENDING : (state) => {
         state.user = { loading : true };
     },
-    TOKEN_REQUEST_SUCCESS : (state, tokenRequest) => {
-        state.user = { token : tokenRequest };
+    TOKEN_REQUEST_SUCCESS : (state) => {
+        state.user = { loading : false }
     },
     TOKEN_REQUEST_FAILURE : (state, error) => {
         state.user =  { error };
@@ -117,21 +93,32 @@ const mutations = {
     },
     LOGOUT_REQUEST_FAILURE : (state, error) => {
         state.user =  { error };
-    }
+    },
+    AUTHENTICATION_SUCCESS : (state, user) => {
+        state.user = user;
+    },
+    OIDC_LIBRARY_EVENTS_HANDLED :  (state) => {
+        state.isOidcEventsHandled = true;
+    },
 };  
   
 const getters = {
-    tokenResponse(state) {
-        return state.user.token;
-    },
     accessToken(state) {
-        return state.user.token.access_token;
+        return state.user.access_token;
     },
-    profile(state){
-        return state.user.token.profile;
+    isLoading(state) {
+        return (state.user != null && state.user.isLoading);
     },
-    isAuthenticated(state){
-        return (state.user);
+    tokenResponse(state) {
+        return (state.user) ? state.user : {};
+    },
+    userProfile(state) {
+        return (state.user 
+            && state.user.profile != null) ? state.user.profile : {};
+    },
+    userIsAuthenticated(state){
+        return (state.user 
+            && state.user.id_token != null);
     }
 };
   

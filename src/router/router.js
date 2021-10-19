@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store';
+import { default as Home } from '@/views/Home.vue'
 
 Vue.use(VueRouter);
 
@@ -12,36 +13,15 @@ const router = new VueRouter({
       redirect: '/home',
     },
     {
+      path: '/login',
+      component:  () => import('@/views/Login'),
+    },
+    {
       path: '/home',
       name: 'Home',
-      component:  () => import('@/views/Home'),
-      meta: {
-        requiresAuth: false,
-      }
-    },
-    {
-      path: '/accessDenied',
-      name: 'AccessDenied',
-      component:  () => import('@/views/AccessDenied'),
-      meta: {
-        requiresAuth: false,
-      }
-    },
-    {
-      path: '/user',
-      name: 'UserView',
-      component: () => import('@/views/UserView'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/user/edit',
-      name: 'UserEdit',
-      component: () => import('@/views/UserEdit'),
+      component: Home,
       meta: {
         requiresAuth: true,
-        requiresRole : ['users:write']
       }
     },
     {
@@ -55,16 +35,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  if (requiresAuth) 
-  { 
-    let requiresRole = to.meta.requiresRole;
-    store.dispatch("auth/checkAccess", requiresRole).then((statusCode) => {
+  if (requiresAuth) { 
+    store.dispatch("auth/checkAccess", requiresAuth).then((statusCode) => {
         if(statusCode == "OK") {
           next();
         }  
         else {
-          let nextPage = (statusCode == "UNAUTHORIZED") ? '/home' :'/accessDenied';
-          next(nextPage);
+          next('/login');
         }
     })
   } 
