@@ -4,11 +4,11 @@ Oidc.Log.logger = console;
 Oidc.Log.level = (process.env.NODE_ENV === 'production') ? Oidc.Log.ERROR : Oidc.Log.DEBUG;
 
 // OIDC configuration
-// let oidcProviderDomain = '$oidc.issuer';
-// let clientId = '$oidc.client.id';
-let oidcProviderDomain = 'http://host.docker.internal:8080/auth/realms/HrvatskiTelekom';
-let clientId = 'f90740e6-7f82-44d9-a255-64347705f562';
-let scopes = "openid profile roles api.ht.hr/product"
+let config = (process.env) ? process.env : window.config;
+console.log(config)
+let oidcProviderDomain = config.VUE_APP_OIDC_PROVIDER_DOMAIN;
+let clientId = config.VUE_APP_OIDC_CLIENT_ID;
+let scopes = config.VUE_APP_OIDC_SCOPES;
 
 let instance;
 

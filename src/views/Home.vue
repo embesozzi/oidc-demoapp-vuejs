@@ -212,8 +212,7 @@ export default {
 		results: null,
 		content : "products", // Default page
 		api : {
-			// url : 'http://localhost:8088/api/products',
-			url: 'http://api-gateway:8280/products/2.0.0/products',
+			url: (process.env) ? process.env.VUE_APP_API_URI : window.config.VUE_APP_API_URI,
 			loading : false
 		},
 		error: {
@@ -249,7 +248,7 @@ export default {
 	methods: {
 		callService : function() 
 		{
-				console.log("Calling service");
+				console.log("Calling service: " + this.api.url);
 				this.api.loading = true;
 				console.log(Buffer.from(this.accessToken.split(".")[1], 'base64').toString())
 				let authHeader = { headers: { Authorization: 'Bearer ' + this.accessToken } };
