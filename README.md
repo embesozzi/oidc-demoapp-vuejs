@@ -28,8 +28,6 @@ npm run serve
 
 - You can access to the UI on http://hostname:8080/
 
-### Run as container
-
 ### Run as Docker
 ```
 docker run -d \
