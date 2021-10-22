@@ -33,6 +33,6 @@ npm run serve
 docker run -d \
 	--name oidc-demoapp-vuejs \
 	-p xxxx:80 \
-   -v $(pwd)/portal/config.js:/usr/share/nginx/html/config.js 
+        -v $(pwd)/portal/config.js:/usr/share/nginx/html/config.js \
 	embesozzi/oidc-demoapp-vuejs:latest
 ```
