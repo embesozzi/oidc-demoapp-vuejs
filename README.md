@@ -1,4 +1,4 @@
-# Vuejs OIDC Demo Application
+# Vuejs OIDC Demo
 Vuejs OpenID Connect demo application using library [oidc-client](https://github.com/IdentityModel/oidc-client-js). Authentication flow data is handled by Vuex.
 
 Support:
@@ -6,26 +6,35 @@ Support:
 * Token negotiation
 * OpenID Connect Endsession
 * OAuth API Call
-* App pages are:
-    * Public 
-    * Private: 
-        *   Required autentication
-        *   Required user's role based on token scopes
 
+## Run
 
-# Deployment
+### Run locally
 
-## Project setup
+#### Clone repository
 ```
-yarn install
+git clone git@github.com:https://github.com/embesozzi/oidc-demoapp-vuejs.git
 ```
 
-### Compiles and hot-reloads for development
+#### Configure
+
+- Create and configure env file base on the env.template
+
+
+#### Execute
 ```
-yarn serve
+npm run serve
 ```
 
-### Compiles and minifies for production
+- You can access to the UI on http://hostname:8080/
+
+### Run as container
+
+### Run as Docker
 ```
-yarn build
+docker run -d \
+	--name oidc-demoapp-vuejs \
+	-p xxxx:80 \
+   -v $(pwd)/portal/config.js:/usr/share/nginx/html/config.js 
+	embesozzi/oidc-demoapp-vuejs:latest
 ```
