@@ -4,7 +4,7 @@ Oidc.Log.logger = console;
 Oidc.Log.level = (process.env.NODE_ENV === 'production') ? Oidc.Log.ERROR : Oidc.Log.DEBUG;
 
 // OIDC configuration
-let config = (process.env) ? process.env : window.config;
+let config = (process.env.VUE_APP_OIDC_PROVIDER_DOMAIN) ? process.env : window.config;
 console.log(config)
 let oidcProviderDomain = config.VUE_APP_OIDC_PROVIDER_DOMAIN;
 let clientId = config.VUE_APP_OIDC_CLIENT_ID;

@@ -212,7 +212,7 @@ export default {
 		results: null,
 		content : "products", // Default page
 		api : {
-			url: (process.env) ? process.env.VUE_APP_API_URI : window.config.VUE_APP_API_URI,
+			url: (pprocess.env.VUE_APP_API_URI) ? process.env.VUE_APP_API_URI : window.config.VUE_APP_API_URI,
 			loading : false
 		},
 		error: {
