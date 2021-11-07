@@ -30,6 +30,7 @@ export const getOidcClient = () => {
     automaticSilentRenew: false,
     filterProtocolClaims: false,
     loadUserInfo: true,
+    monitorSession: false,
     includeIdTokenInSilentRenew : false
   });
   return instance;
